@@ -4,7 +4,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const prefix = '!Alt'
 
-const commands = ["Hello","TestChannel","TestReact", "NewRaid"]
+const commands = ["hello","newraid","testchannel","testreact" ]
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -29,32 +29,33 @@ client.on('message', triggerMessage =>
     const command = args.shift().toLowerCase();
 
     console.log("Recieved Command:" + command);
+    console.log(args)
 
     switch (command) 
     {
-      case ('hello'):
+      case (commands[0]):
       {
         AnswerHello(triggerMessage);
         break;
       }
-      case ('testchannel'):
+      case (commands[1]):
+      {        
+        TestRaid(triggerMessage, args);
+        break;
+      }
+      case (commands[2]):
       {
         TestChannel(triggerMessage);
         break;
       }
-      case ('testreact'):
+      case (commands[3]):
       {
         TestReactions(triggerMessage);
         break;
       }
-      case ('newraid'):
-      {
-        TestRaid(triggerMessage);
-        break;
-      }
       default:
       {
-        TestDefault(triggerMessage);
+        TestDefault(triggerMessage, args);
         break;
       }
     }
@@ -70,7 +71,7 @@ function AnswerHello(msg)
 function TestChannel(msg) 
 {
   msg.channel.send('I can read/write messages from/to this channel')
-    .then(sentMessage => sentMessage.react('😄'))
+    .then(sendMessage => sendMessage.react('😄'))
     .catch(console.error);
 }
 
@@ -81,14 +82,59 @@ function TestReactions(msg)
   msg.react('🍓');
 }
 
-function TestRaid(msg)
+function TestRaid(msg, args)
 {
-  msg.channel.send('Next Raid is scheduled on dd.mm at tt:tt \nReact with 👍 to register yourself.')
-    .then(sentMessage => sentMessage.react('👍')
-    .then(sentMessage.react('😄')));
+  if (!args.length || args.length > 2)
+  {
+    RaidErrorMsg(msg, 0);
+  }
+  else 
+  {
+    const date = args[0].split('.');
+    const time = args[1].split(':');
+    
+    // Checks if the date could be correct. I'm too lazy to do a correct date check.
+    // So the bot allows a 31 Feb. ;) 
+    // date[0] = day | date[1] = month // time[0] = hour | time[1] = minutes
+    if (date[0] < 1 || date[0] > 31 && date[1] < 1 || date[1] > 12)
+    {
+      return RaidErrorMsg(msg, 1);
+    }
+    if (time[0] < 0 || time[0] > 23 && time[1] < 0 || time[0] > 59)
+    {
+      return RaidErrorMsg(msg, 2);
+    }
+
+    msg.channel.send(`Next Raid is scheduled on ${args[0]} at ${args[1]} 
+    \nReact with 👍 to register yourself.`)
+      .then(sendMessage => sendMessage.react('👍')
+      .then(sendMessage.react('😄')));
+  }
 }
 
-function TestDefault(msg)
+function RaidErrorMsg(msg, errorcode)
+{
+  const prefixErrorMessage = "Whoops, you have given me"
+  const postfixErrorMessage = `\nCorrect command:\n${commands[1]} DD.MM TT:TT`
+  
+  if (errorcode === 0)
+  {
+    msg.author.send(`${prefixErrorMessage} wrong arguments.
+    ${postfixErrorMessage}`)
+  }
+  else if (errorcode === 1)
+  {
+    msg.author.send(`${prefixErrorMessage} a possible incorrect date.
+    ${postfixErrorMessage}`)
+  }
+  else if (errorcode === 2)
+  {
+    msg.author.send(`${prefixErrorMessage} a possible incorrect time.
+    ${postfixErrorMessage}`)
+  }
+}
+
+function TestDefault(msg,args)
 {
   console.log("DefaultCase called!");
 }
