@@ -40,7 +40,7 @@ client.on('message', triggerMessage =>
       }
       case (commands[1]):
       {        
-        TestRaid(triggerMessage, args);
+        newRaidMessage(triggerMessage, args);
         break;
       }
       case (commands[2]):
@@ -55,7 +55,7 @@ client.on('message', triggerMessage =>
       }
       default:
       {
-        TestDefault(triggerMessage, args);
+        DefaultCase(triggerMessage, args);
         break;
       }
     }
@@ -82,7 +82,7 @@ function TestReactions(msg)
   msg.react('🍓');
 }
 
-function TestRaid(msg, args)
+function newRaidMessage(msg, args)
 {
   if (!args.length || args.length > 2)
   {
@@ -134,9 +134,12 @@ function RaidErrorMsg(msg, errorcode)
   }
 }
 
-function TestDefault(msg,args)
+function DefaultCase(msg,args)
 {
   console.log("DefaultCase called!");
+
+  msg.author.send(`Hey, you used my prefix to call me, but i could not find a corresponding command ☹️. Use my commands in the channel where you want me to answer 😄 Here are my commands:"
+  \n!Alt ${commands}`);
 }
 
 client.login(process.env.TOKEN);
