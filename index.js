@@ -7,31 +7,31 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', recievedMessage => 
+client.on('message', triggerMessage => 
 {
   // Checks if the message is send by a bot,
   // if so it does nothing
-  if (recievedMessage.author.bot) 
+  if (triggerMessage.author.bot) 
   {
     return
   }
   else 
   {
-    switch (recievedMessage.content) 
+    switch (triggerMessage.content) 
     {
       case ('!AltHello'):
         {
-          AnswerHello(recievedMessage);
+          AnswerHello(triggerMessage);
           break;
         }
       case ('!AltTestChannel'):
         {
-          TestChannel(recievedMessage);
+          TestChannel(triggerMessage);
           break;
         }
       case ('!AltTestReact'):
         {
-          TestReactions(recievedMessage)
+          TestReactions(triggerMessage)
           break;
         }
     }
@@ -47,7 +47,7 @@ function AnswerHello(msg)
 function TestChannel(msg) 
 {
   msg.channel.send('I can read/write messages from/to this channel')
-    .then(newMessage => newMessage.react('😄'))
+    .then(sentMessage => sentMessage.react('😄'))
     .catch(console.error);
 }
 
