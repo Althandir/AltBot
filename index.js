@@ -125,7 +125,7 @@ function newRaidMessage(msg, args)
   {
     return RaidErrorMsg(msg, 1);
   }
-  if ((time[0] < 0 || time[0] > 23) || (time[1] < 0 || time[0] > 59))
+  if ((time[0] < 0 || time[0] > 23) || (time[1] < 0 || time[1] > 59))
   {
     return RaidErrorMsg(msg, 2);
   }
